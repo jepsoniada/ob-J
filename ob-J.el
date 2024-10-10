@@ -5,7 +5,9 @@
   ""
   (let ((params (org-babel-J-process-params params)))
     (let-alist params
-      (format "%s\n%s"
+      ;; `9!:37' is for output control
+      ;; it may bring some issues or fixes in case of weird formating
+      (format "(9!:37) 0 _ 0 _\n%s\n%s"
 	      (apply 'concat (mapcar (lambda (x)
 				       (format "%s =: %s\n"
 					       (car x)
