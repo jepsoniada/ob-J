@@ -79,14 +79,14 @@ J-VALUE is string representation of 5 J boxed values:
 		 do (cl-loop for col being the elements of-ref row
 			     for type = (pop types) then (pop types)
 			     when (not (equal 'character type))
-			     do (setf col (cond ((equal 'number type) (string-to-number col)))))
+			     do (setf col (cond ((equal 'number type) (org-babel-J-string-to-number col)))))
 		 finally return box-cells)
       (cond ((and (eq (car types) 'character) (= rank 1))
 	     (string-trim value))
 	    ((and (eq (car types) 'character) (= rank 2))
 	     (mapcar (lambda (a) (list (string-trim a)))
 		     (string-split (string-trim value) "\n")))
-	    (t (mapcar (lambda (a) (mapcar #'string-to-number
+	    (t (mapcar (lambda (a) (mapcar #'org-babel-J-string-to-number
 					 (string-split a)))
 		       (string-split value "\n")))))))
 
@@ -166,5 +166,17 @@ Values tested are sourced form [[https://code.jsoftware.com/wiki/Vocabulary/Noun
 	   (if (listp (car list))
 	       (org-babel-J-aproximate-list-shape (car list))
 	     nil))))
+
+(defun org-babel-J-string-to-number (number)
+  "convert J numbers in string form to elips numbers
+It goes like this:
+  - negative/positive integers/floats goes by
+  - infinities throws error
+  - imaginary/complex numbers throws error"
+  (pcase number
+    ((rx "j") (error "imaginary/complex numbers not supported"))
+    ((or "__" "_") (error "infinities are not supported"))
+    ((rx line-start "_") (string-to-number (concat "-" (substring number 1))))
+    (_ (string-to-number number))))
 
 (provide 'ob-J)
