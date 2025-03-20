@@ -49,7 +49,7 @@ J-VALUE is string representation of 5 J boxed values:
 			(string-split (string-trim (nth 2
 							(car raw-table))))))
 	 (is-box (if (= 1 (string-to-number (string-trim (nth 3 (car raw-table)))))
-		     t
+		   t
 		   nil))
 	 (types (mapcar (lambda (a) (org-babel-J-typeof (string-to-number a)))
 			(string-split (string-trim (nth 4
@@ -74,20 +74,20 @@ J-VALUE is string representation of 5 J boxed values:
 			(car invalid-structurep)))
       (error "nested arrays are not allowed"))
     (if is-box
-	(cl-loop with box-cells = (org-babel-J-get-box-cells value)
-		 for row being the elements of-ref box-cells
-		 do (cl-loop for col being the elements of-ref row
-			     for type = (pop types) then (pop types)
-			     when (not (equal 'character type))
-			     do (setf col (cond ((equal 'number type) (org-babel-J-string-to-number col)))))
-		 finally return box-cells)
+      (cl-loop with box-cells = (org-babel-J-get-box-cells value)
+	       for row being the elements of-ref box-cells
+	       do (cl-loop for col being the elements of-ref row
+			   for type = (pop types) then (pop types)
+			   when (not (equal 'character type))
+			   do (setf col (cond ((equal 'number type) (org-babel-J-string-to-number col)))))
+	       finally return box-cells)
       (cond ((and (eq (car types) 'character) (= rank 1))
 	     (string-trim value))
 	    ((and (eq (car types) 'character) (= rank 2))
 	     (mapcar (lambda (a) (list (string-trim a)))
 		     (string-split (string-trim value) "\n")))
 	    (t (mapcar (lambda (a) (mapcar #'org-babel-J-string-to-number
-					 (string-split a)))
+					   (string-split a)))
 		       (string-split value "\n")))))))
 
 (defun org-babel-J-get-box-cells (table-as-string)
@@ -164,7 +164,7 @@ Values tested are sourced form [[https://code.jsoftware.com/wiki/Vocabulary/Noun
   (when (listp list)
     (nconc (list (length list))
 	   (if (listp (car list))
-	       (org-babel-J-aproximate-list-shape (car list))
+	     (org-babel-J-aproximate-list-shape (car list))
 	     nil))))
 
 (defun org-babel-J-string-to-number (number)
