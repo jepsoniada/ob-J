@@ -143,15 +143,18 @@ Values tested are sourced form [[https://code.jsoftware.com/wiki/Vocabulary/Noun
 (defun org-babel-J-var-to-J (data)
   "Converts elisp value into J expression."
   (cond ((listp data)
-	 (let ((flatten-list (flatten-list data)))
+	 (let ((flatten-list (flatten-list data))
+               (shape (org-babel-J-aproximate-list-shape data)))
 	   (format "%s $ %s"
 		   (mapconcat #'number-to-string
-			      (org-babel-J-aproximate-list-shape data)
+			      shape
 			      " ")
-		   (mapconcat (lambda (a) (format "(%s)"
-						  (org-babel-J-var-to-J a)))
-			      flatten-list
-			      " ; "))))
+		   (if (memq 0 shape)
+                     "0"
+                     (mapconcat (lambda (a) (format "(%s)"
+						    (org-babel-J-var-to-J a)))
+			        flatten-list
+			        " ; ")))))
 	((stringp data)
 	 (format "'%s'"
 		 (string-replace "'" "''" data)))
@@ -162,10 +165,12 @@ Values tested are sourced form [[https://code.jsoftware.com/wiki/Vocabulary/Noun
 (defun org-babel-J-aproximate-list-shape (list)
   "Returns dimensions of LIST in J's style of monadic '$'."
   (when (listp list)
-    (nconc (list (length list))
-	   (if (listp (car list))
-	     (org-babel-J-aproximate-list-shape (car list))
-	     nil))))
+    (if (= 0  (length list))
+      '(0)
+      (nconc (list (length list))
+	     (if (listp (car list))
+	       (org-babel-J-aproximate-list-shape (car list))
+	       nil)))))
 
 (defun org-babel-J-string-to-number (number)
   "convert J numbers in string form to elips numbers
