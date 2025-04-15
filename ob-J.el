@@ -145,7 +145,9 @@ Values tested are sourced form [[https://code.jsoftware.com/wiki/Vocabulary/Noun
   (cond ((listp data)
 	 (let ((flatten-list (flatten-list data))
                (shape (org-babel-J-aproximate-list-shape data)))
-	   (format "%s $ %s"
+	   (format (if (or (< 1 (length flatten-list)) (memq 0 shape))
+                     "%s $ %s"
+                     "< %s $ %s")
 		   (mapconcat #'number-to-string
 			      shape
 			      " ")
