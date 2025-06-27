@@ -159,7 +159,7 @@ Values tested are sourced form [[https://code.jsoftware.com/wiki/Vocabulary/Noun
 			        " ; ")))))
 	((stringp data)
 	 (format "'%s'"
-		 (string-replace "'" "''" data)))
+		 (string-trim (string-replace "'" "''" data))))
 	((numberp data)
 	 (number-to-string data))
 	(t (error "data type not implemented"))))
